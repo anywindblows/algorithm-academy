@@ -1,0 +1,25 @@
+version: "3.8"
+services:
+  adminer:
+    image: dpage/pgadmin4:latest
+    hostname: pgadmin
+    container_name: pgadmin
+    depends_on:
+      - db
+    ports:
+      - "5555:80"
+    restart: unless-stopped
+    networks:
+      - dbnet
+    env_file: "environment/.env"
+
+  web:
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/code
+    build:
+      # Needed for fixing permissions of files created by Docker
+      args:
+        - UID=${UID:-1000}
+        - GID=${GID:-1000}

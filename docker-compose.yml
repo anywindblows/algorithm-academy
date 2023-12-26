@@ -1,0 +1,41 @@
+version: "3.8"
+services:
+  db:
+    hostname: db
+    container_name: db
+    image: postgres:15-alpine
+    env_file: "environment/.env"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - dbnet
+    restart: unless-stopped
+
+  web:
+    <<: &web
+      hostname: web
+      container_name: web
+      build:
+        target: development_build
+        context: .
+        dockerfile: ./docker/Dockerfile
+        args:
+          FASTAPI_ENV: development
+#        cache_from:
+#          - ""
+      depends_on:
+        - db
+      networks:
+        - webnet
+        - dbnet
+      env_file: "environment/.env"
+
+    command: ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--reload"]
+
+
+networks:
+  dbnet:
+  webnet:
+
+volumes:
+  pgdata:

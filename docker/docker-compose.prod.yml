@@ -1,0 +1,35 @@
+version: "3.8"
+services:
+  caddy:
+    image: caddy:2
+    hostname: caddy
+    container_name: caddy
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - webnet
+    env_file: "environment/.env"
+    volumes:
+      - $PWD/docker/Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    restart: unless-stopped
+
+  web:
+    <<: &web
+#      image: ""
+      build:
+        target: production_build
+        args:
+          DJANGO_ENV: production
+
+      restart: unless-stopped
+
+    command: ["bash", "docker/entrypoint.sh"]
+    ports:
+      - "8000:8000"
+
+volumes:
+  caddy_data:
+  caddy_config:
