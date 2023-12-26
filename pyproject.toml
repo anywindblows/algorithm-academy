@@ -40,15 +40,29 @@ use_parentheses = true
 wrap_length = 88
 
 [tool.ruff]
+target-version = "py311"
 fix = true
-line-length = 88
 unsafe-fixes = true
+line-length = 88
+select = ["ALL"]
+ignore = ["D1", "D203", "D213", "ANN101", "RUF012"]
+extend-exclude = ["migrations"]
 
 [tool.ruff.format]
-indent-style = "space"
-line-ending = "auto"
 quote-style = "single"
+indent-style = "space"
 skip-magic-trailing-comma = false
+line-ending = "auto"
+
+[tool.ruff.lint.flake8-unused-arguments]
+ignore-variadic-names = true
+
+[tool.ruff.flake8-quotes]
+inline-quotes = "single"
+
+[tool.ruff.extend-per-file-ignores]
+"tests/*.py" = ["S101", "S106"]
+"alembic/*.py" = ["INP001", "ERA001"]
 
 [build-system]
 build-backend = "poetry.core.masonry.api"
